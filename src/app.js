@@ -120,7 +120,9 @@ function onGalleryItemClick(e) {
   }
 
   e.preventDefault();
-  closeModalOverlay();
+  modalMenuRef.classList.add("is-open");
+  modalMenuImgRef.src = e.target.dataset.source;
+  modalMenuImgRef.alt = e.target.alt;
 }
 
 function onModalCloseBtnClick(e) {
