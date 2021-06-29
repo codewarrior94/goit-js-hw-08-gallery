@@ -102,7 +102,9 @@ function onGalleryItemClick(e) {
   }
 
   e.preventDefault();
-  openModalWindow(e);
+  modalMenuRef.classList.add("is-open");
+  modalMenuImgRef.src = e.target.dataset.source;
+  modalMenuImgRef.alt = e.target.alt;
 }
 
 function onModalCloseBtnClick(e) {
@@ -125,10 +127,4 @@ function closeModalOverlay() {
   modalMenuRef.classList.remove("is-open");
   modalMenuImgRef.src = "";
   modalMenuImgRef.alt = "";
-}
-
-function openModalWindow(e) {
-  modalMenuRef.classList.add("is-open");
-  modalMenuImgRef.src = e.target.dataset.source;
-  modalMenuImgRef.alt = e.target.alt;
 }
