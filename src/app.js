@@ -107,7 +107,7 @@ function createGalleryElementsMarkup(galleryItems) {
                     alt="${description}"
                   />
                 </a>
-                </li>`;
+               </li>`;
     })
     .join("");
 }
@@ -120,9 +120,7 @@ function onGalleryItemClick(e) {
   }
 
   e.preventDefault();
-  modalMenuRef.classList.add("is-open");
-  modalMenuImgRef.src = e.target.dataset.source;
-  modalMenuImgRef.alt = e.target.alt;
+  closeModalOverlay();
 }
 
 function onModalCloseBtnClick(e) {
