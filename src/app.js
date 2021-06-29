@@ -126,15 +126,11 @@ function onGalleryItemClick(e) {
 }
 
 function onModalCloseBtnClick(e) {
-  modalMenuRef.classList.remove("is-open");
-  modalMenuImgRef.src = "";
-  modalMenuImgRef.alt = "";
+  closeModalOverlay()
 }
 
 function onModalOverlayClick(e) {
-  modalMenuRef.classList.remove("is-open");
-  modalMenuImgRef.src = "";
-  modalMenuImgRef.alt = "";
+  closeModalOverlay()
 }
 
 function onModalOverlayKeydown(e) {
@@ -142,6 +138,10 @@ function onModalOverlayKeydown(e) {
     return;
   }
 
+  closeModalOverlay()
+}
+
+function closeModalOverlay() {
   modalMenuRef.classList.remove("is-open");
   modalMenuImgRef.src = "";
   modalMenuImgRef.alt = "";
