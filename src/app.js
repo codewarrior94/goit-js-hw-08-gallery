@@ -116,6 +116,10 @@ function onModalOverlayClick(e) {
 }
 
 function onModalOverlayKeydown(e) {
+  if (e.code === "Enter") {
+    return;
+  }
+  
   if (e.code !== "Escape") {
     return;
   }
