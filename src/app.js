@@ -64,7 +64,7 @@ const galleryItems = [
   },
 ];
 
-/* 
+/*
     ## Раздел ссылок на элементы
 */
 
@@ -94,6 +94,24 @@ document.addEventListener("keydown", onModalOverlayKeydown);
     ## Раздел функций
 */
 
+function createGalleryElementsMarkup(galleryItems) {
+  return galleryItems
+    .map(({ preview, original, description }) => {
+      return `<li class="gallery__item">
+                <a class="gallery__link"
+                  href="${original}"
+                  >
+                  <img class="gallery__image"
+                    src="${preview}" 
+                    data-source="${original}" 
+                    alt="${description}"
+                  />
+                </a>
+               </li>`;
+    })
+    .join("");
+}
+
 function onGalleryItemClick(e) {
   const isGalleryImg = e.target.classList.contains("gallery__image");
 
@@ -102,9 +120,7 @@ function onGalleryItemClick(e) {
   }
 
   e.preventDefault();
-  modalMenuRef.classList.add("is-open");
-  modalMenuImgRef.src = e.target.dataset.source;
-  modalMenuImgRef.alt = e.target.alt;
+  openModalWindow(e);
 }
 
 function onModalCloseBtnClick(e) {
@@ -119,7 +135,7 @@ function onModalOverlayKeydown(e) {
   if (e.code === "Enter") {
     return;
   }
-  
+
   if (e.code !== "Escape") {
     return;
   }
@@ -131,4 +147,10 @@ function closeModalOverlay() {
   modalMenuRef.classList.remove("is-open");
   modalMenuImgRef.src = "";
   modalMenuImgRef.alt = "";
+}
+
+function openModalWindow(e) {
+  modalMenuRef.classList.add("is-open");
+  modalMenuImgRef.src = e.target.dataset.source;
+  modalMenuImgRef.alt = e.target.alt;
 }
