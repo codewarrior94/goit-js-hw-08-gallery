@@ -141,27 +141,62 @@ function onModalOverlayKeydown(e) {
 
   if (e.code === "Enter") {
     e.preventDefault();
-
-    if (e.code === "Enter") {
-      return;
-    }
-
-    if (e.code !== "Escape") {
-      return;
-    }
-
-    closeModalOverlay();
   }
 
-  function closeModalOverlay() {
-    modalMenuRef.classList.remove("is-open");
-    modalMenuImgRef.src = "";
-    modalMenuImgRef.alt = "";
+  if (e.code !== "Escape") {
+    return;
   }
 
-  function openModalWindow(e) {
-    modalMenuRef.classList.add("is-open");
-    modalMenuImgRef.src = e.target.dataset.source;
-    modalMenuImgRef.alt = e.target.alt;
+  closeModalOverlay();
+}
+
+function closeModalOverlay() {
+  refs.body.style.overflow = "scroll";
+  refs.modalMenu.classList.remove("is-open");
+  refs.modalMenuImg.src = "";
+  refs.modalMenuImg.alt = "";
+  refs.modalMenuImg.dataset.index = "";
+
+  refs.modalCloseBtn.removeEventListener("click", onModalCloseBtnClick);
+  refs.modalOverlay.removeEventListener("click", onModalOverlayClick);
+  document.removeEventListener("keydown", onModalOverlayKeydown);
+}
+
+function openModalWindow(e) {
+  refs.modalMenu.classList.add("is-open");
+  refs.modalMenuImg.src = e.target.dataset.source;
+  refs.modalMenuImg.alt = e.target.alt;
+
+  refs.modalCloseBtn.addEventListener("click", onModalCloseBtnClick);
+  refs.modalOverlay.addEventListener("click", onModalOverlayClick);
+  document.addEventListener("keydown", onModalOverlayKeydown);
+  document.querySelector("body").style.overflow = "hidden";
+}
+
+/* 
+    ## Реализация слайдера по стрелкам
+*/
+
+const imgList = galleryItems.map((srcRef) => srcRef.original);
+
+let counter = 0;
+
+function nextImg() {
+  if (counter < imgList.length - 1) {
+    counter++;
+    refs.modalMenuImg.src = `${imgList[counter]}`;
+  } else {
+    counter = 0;
+    refs.modalMenuImg.src = `${imgList[counter]}`;
+  }
+}
+
+function privImg() {
+  if (counter > 0) {
+    counter--;
+    refs.modalMenuImg.src = `${imgList[counter]}`;
+  } else {
+    counter = imgList.length - 1;
+    refs.modalMenuImg.src = `${imgList[counter]}`;
   }
 }
