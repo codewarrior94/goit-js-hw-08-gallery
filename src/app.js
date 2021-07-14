@@ -64,31 +64,28 @@ const galleryItems = [
   },
 ];
 
-/* 
+/*
     ## Раздел ссылок на элементы
 */
 
-const galleryRef = document.querySelector(".js-gallery");
-const modalMenuRef = document.querySelector(".js-lightbox");
-const modalMenuImgRef = document.querySelector(".lightbox__image");
-const modalOverlayRef = document.querySelector(".lightbox__overlay");
-const modalCloseBtnRef = document.querySelector(".lightbox__button");
-const generatedGalleryMarkup = createGalleryElementsMarkup(galleryItems);
+const refs = {
+  body: document.querySelector("body"),
+  gallery: document.querySelector(".js-gallery"),
+  modalMenu: document.querySelector(".js-lightbox"),
+  modalMenuImg: document.querySelector(".lightbox__image"),
+  modalOverlay: document.querySelector(".lightbox__overlay"),
+  modalCloseBtn: document.querySelector(".lightbox__button"),
+};
 
-// Вставка сгенерированной разметки
-galleryRef.insertAdjacentHTML("beforeend", generatedGalleryMarkup);
+//  Генерация разметки
+const generatedGalleryMarkup = createGalleryElementsMarkup(galleryItems);
+refs.gallery.insertAdjacentHTML("beforeend", generatedGalleryMarkup);
 
 /* 
     ## Раздел слушателей событий
 */
 
-galleryRef.addEventListener("click", onGalleryItemClick);
-
-modalCloseBtnRef.addEventListener("click", onModalCloseBtnClick);
-
-modalOverlayRef.addEventListener("click", onModalOverlayClick);
-
-document.addEventListener("keydown", onModalOverlayKeydown);
+refs.gallery.addEventListener("click", onGalleryItemClick);
 
 /* 
     ## Раздел функций
@@ -96,53 +93,110 @@ document.addEventListener("keydown", onModalOverlayKeydown);
 
 function createGalleryElementsMarkup(galleryItems) {
   return galleryItems
-    .map(({ preview, original, description }) => {
+    .map(({ preview, original, description }, index) => {
       return `<li class="gallery__item">
                 <a class="gallery__link"
                   href="${original}"
                   >
                   <img class="gallery__image"
                     src="${preview}" 
-                    data-source="${original}" 
+                    data-source="${original}"
+                    data-idx="${index}"
                     alt="${description}"
                   />
                 </a>
-                </li>`;
+               </li>`;
     })
     .join("");
 }
 
 function onGalleryItemClick(e) {
   const isGalleryImg = e.target.classList.contains("gallery__image");
+  counter = e.target.dataset.idx;
 
   if (!isGalleryImg) {
     return;
   }
 
   e.preventDefault();
-  modalMenuRef.classList.add("is-open");
-  modalMenuImgRef.src = e.target.dataset.source;
-  modalMenuImgRef.alt = e.target.alt;
+  openModalWindow(e);
 }
 
 function onModalCloseBtnClick(e) {
-  modalMenuRef.classList.remove("is-open");
-  modalMenuImgRef.src = "";
-  modalMenuImgRef.alt = "";
+  closeModalOverlay();
 }
 
 function onModalOverlayClick(e) {
-  modalMenuRef.classList.remove("is-open");
-  modalMenuImgRef.src = "";
-  modalMenuImgRef.alt = "";
+  closeModalOverlay();
 }
 
 function onModalOverlayKeydown(e) {
+  if (e.code === "ArrowRight") {
+    nextImg();
+  }
+
+  if (e.code === "ArrowLeft") {
+    privImg();
+  }
+
+  if (e.code === "Enter") {
+    e.preventDefault();
+  }
+
   if (e.code !== "Escape") {
     return;
   }
 
-  modalMenuRef.classList.remove("is-open");
-  modalMenuImgRef.src = "";
-  modalMenuImgRef.alt = "";
+  closeModalOverlay();
+}
+
+function closeModalOverlay() {
+  refs.body.style.overflow = "scroll";
+  refs.modalMenu.classList.remove("is-open");
+  refs.modalMenuImg.src = "";
+  refs.modalMenuImg.alt = "";
+  refs.modalMenuImg.dataset.index = "";
+
+  refs.modalCloseBtn.removeEventListener("click", onModalCloseBtnClick);
+  refs.modalOverlay.removeEventListener("click", onModalOverlayClick);
+  document.removeEventListener("keydown", onModalOverlayKeydown);
+}
+
+function openModalWindow(e) {
+  refs.modalMenu.classList.add("is-open");
+  refs.modalMenuImg.src = e.target.dataset.source;
+  refs.modalMenuImg.alt = e.target.alt;
+
+  refs.modalCloseBtn.addEventListener("click", onModalCloseBtnClick);
+  refs.modalOverlay.addEventListener("click", onModalOverlayClick);
+  document.addEventListener("keydown", onModalOverlayKeydown);
+  document.querySelector("body").style.overflow = "hidden";
+}
+
+/* 
+    ## Реализация слайдера по стрелкам
+*/
+
+const imgList = galleryItems.map((srcRef) => srcRef.original);
+
+let counter = 0;
+
+function nextImg() {
+  if (counter < imgList.length - 1) {
+    counter++;
+    refs.modalMenuImg.src = `${imgList[counter]}`;
+  } else {
+    counter = 0;
+    refs.modalMenuImg.src = `${imgList[counter]}`;
+  }
+}
+
+function privImg() {
+  if (counter > 0) {
+    counter--;
+    refs.modalMenuImg.src = `${imgList[counter]}`;
+  } else {
+    counter = imgList.length - 1;
+    refs.modalMenuImg.src = `${imgList[counter]}`;
+  }
 }
